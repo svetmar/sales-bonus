@@ -27,7 +27,7 @@ function calculateBonusByProfit(index, total, seller) {
     bonusPercent = 0.15;
   } else if (index == 1 || index == 2) {
     bonusPercent = 0.1;
-  } else if (index == total) {
+  } else if (index == total - 1) {
     bonusPercent = 0;
   }
 
@@ -84,7 +84,15 @@ function analyzeSalesData(data, options) {
   // Вызовем функцию расчёта бонуса для каждого продавца в отсортированном массиве
 
   data.purchase_records.forEach((record) => {
-
+    if (
+      !data ||
+      data.sellers.length === 0 ||
+      data.products.length === 0 ||
+      data.purchase_records.length === 0 ||
+      data.customers.length === 0
+    ) {
+      throw new Error("Некорректные входные данные");
+    }
     const seller = sellerIndex[record.seller_id]; // Продавец
     seller.sales_count += 1; // Увеличить количество продаж
     seller.revenue += record.total_amount; // Увеличить общую сумму всех продаж
@@ -110,7 +118,7 @@ function analyzeSalesData(data, options) {
 
   sellerStats.forEach((seller, index) => {
     // Считаем бонус
-    seller.bonus = calculateBonus(index, sellerStats.length - 1, seller);
+    seller.bonus = calculateBonus(index, sellerStats.length, seller);
 
     // Формируем топ-10 товаров
     seller.top_products = Object.entries(seller.products_sold)
