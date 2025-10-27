@@ -42,17 +42,16 @@ function calculateBonusByProfit(index, total, seller) {
  */
 function analyzeSalesData(data, options) {
   // Здесь проверим входящие данные
-  if (!data || !Array.isArray(data.sellers) || data.sellers.length === 0) {
+  if (
+    !data ||
+    !Array.isArray(data.sellers) ||
+    !Array.isArray(data.products) ||
+    !Array.isArray(data.purchase_records) ||
+    data.sellers.length === 0 ||
+    data.products.length === 0 ||
+    data.purchase_records.length === 0
+  ) {
     throw new Error("Некорректные входные данные");
-  }
-  if (!typeof options === "object") {
-    throw new Error("Второй параметр функции не является объектом");
-  }
-
-  const { calculateRevenue, calculateBonus } = options; // Сюда передадим функции для расчётов
-
-  if (!calculateRevenue || !calculateBonus) {
-    throw new Error("Функции, передаваемые в аргументах не определены");
   }
 
   // Здесь посчитаем промежуточные данные и отсортируем продавцов
@@ -84,15 +83,6 @@ function analyzeSalesData(data, options) {
   // Вызовем функцию расчёта бонуса для каждого продавца в отсортированном массиве
 
   data.purchase_records.forEach((record) => {
-    if (
-      !data ||
-      data.sellers.length === 0 ||
-      data.products.length === 0 ||
-      data.purchase_records.length === 0 ||
-      data.customers.length === 0
-    ) {
-      throw new Error("Некорректные входные данные");
-    }
     const seller = sellerIndex[record.seller_id]; // Продавец
     seller.sales_count += 1; // Увеличить количество продаж
     seller.revenue += record.total_amount; // Увеличить общую сумму всех продаж
