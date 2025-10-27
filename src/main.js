@@ -84,14 +84,6 @@ function analyzeSalesData(data, options) {
   // Вызовем функцию расчёта бонуса для каждого продавца в отсортированном массиве
 
   data.purchase_records.forEach((record) => {
-    // Чек
-    if (
-      !data.purchase_records ||
-      !Array.isArray(data.purchase_records) ||
-      data.purchase_records.length === 0
-    ) {
-      throw new Error("Некорректные входные данные");
-    }
 
     const seller = sellerIndex[record.seller_id]; // Продавец
     seller.sales_count += 1; // Увеличить количество продаж
