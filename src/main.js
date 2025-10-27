@@ -54,6 +54,8 @@ function analyzeSalesData(data, options) {
     throw new Error("Некорректные входные данные");
   }
 
+  const { calculateRevenue, calculateBonus } = options;
+
   // Здесь посчитаем промежуточные данные и отсортируем продавцов
   const sellerStats = data.sellers.map((seller) => ({
     // Заполним начальными данными
