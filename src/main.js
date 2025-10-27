@@ -27,7 +27,7 @@ function calculateBonusByProfit(index, total, seller) {
     bonusPercent = 0.15;
   } else if (index == 1 || index == 2) {
     bonusPercent = 0.1;
-  } else if (index == total-1) {
+  } else if (index == total) {
     bonusPercent = 0;
   }
 
@@ -83,8 +83,16 @@ function analyzeSalesData(data, options) {
   );
   // Вызовем функцию расчёта бонуса для каждого продавца в отсортированном массиве
 
-  data.purchase_records.forEach((record) => {// Чек
-    
+  data.purchase_records.forEach((record) => {
+    // Чек
+    if (
+      !data.purchase_records ||
+      !Array.isArray(data.purchase_records) ||
+      data.purchase_records.length === 0
+    ) {
+      throw new Error("Некорректные входные данные");
+    }
+
     const seller = sellerIndex[record.seller_id]; // Продавец
     seller.sales_count += 1; // Увеличить количество продаж
     seller.revenue += record.total_amount; // Увеличить общую сумму всех продаж
@@ -113,13 +121,10 @@ function analyzeSalesData(data, options) {
     seller.bonus = calculateBonus(index, sellerStats.length - 1, seller);
 
     // Формируем топ-10 товаров
-    let topIndex = Object.entries(seller.products_sold);
-    topIndex = topIndex.map((pair) => {
-      const [sku, quantity] = pair;
-      return { sku: sku, quantity: quantity };
-    });
-    topIndex.sort((a, b) => b.quantity - a.quantity);
-    seller.top_products = topIndex.slice(0, 10);
+    seller.top_products = Object.entries(seller.products_sold)
+      .map(([sku, quantity]) => ({ sku, quantity })) // сократил до 1 строчки путем деструктуризации в аргументах
+      .sort((a, b) => b.quantity - a.quantity) // сортируем с мутированием текущего массива
+      .slice(0, 10); // обрезаем
   });
 
   // Сформируем и вернём отчёт
